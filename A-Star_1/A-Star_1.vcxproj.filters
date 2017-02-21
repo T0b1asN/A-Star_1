@@ -13,5 +13,39 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Headerdateien\Util">
+      <UniqueIdentifier>{63240b6e-f1b7-43e2-af6e-496a3c9fd45b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Util\Incl">
+      <UniqueIdentifier>{8a794efd-c861-4a96-9530-d89710e50dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Util">
+      <UniqueIdentifier>{8eb16051-5e0f-4bc0-b00c-dd556ba57d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Map">
+      <UniqueIdentifier>{40eed4a0-d092-4d54-afe9-bbe2f17b79e1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="curr.cpp">
+      <Filter>Quelldateien\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SFML.h">
+      <Filter>Headerdateien\Util\Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="curr.h">
+      <Filter>Headerdateien\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
