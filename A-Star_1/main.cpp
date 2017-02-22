@@ -14,6 +14,11 @@ int main()
 	setup();
 	map.setupFromTextPath("res\\Test_2.png");
 
+	std::cout << "Size: " << map.getSize().x << "|" << map.getSize().y << std::endl;
+
+	std::cout << "Start: " << map.getStartPos().x << "|" << map.getStartPos().y << std::endl;
+	std::cout << "End: " << map.getEndPos().x << "|" << map.getEndPos().y << std::endl;
+
 	while (cr::currWin().isOpen())
 	{
 		sf::Event evnt;
@@ -27,7 +32,6 @@ int main()
 				break;
 			}
 		}
-
 		Draw();
 	}
 

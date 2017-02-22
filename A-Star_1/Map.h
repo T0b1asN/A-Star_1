@@ -14,6 +14,9 @@ private:
 	std::vector<sf::RectangleShape> fields;
 
 	void priv_setup();
+
+	sf::Vector2i startPos;
+	sf::Vector2i endPos;
 public:
 	Map(sf::Vector2i);
 	~Map();
@@ -22,5 +25,15 @@ public:
 	void setupFromTexture(sf::Image);
 	void setupFromTextPath(std::string);
 	void Draw();
+
+	void SetTile(sf::Vector2i, int);
+	void SetTile(int, int, int);
+
+	sf::Color ColorFromInt(int);
+
+	sf::Vector2i getStartPos() { return startPos; }
+	sf::Vector2i getEndPos() { return endPos; }
+
+	sf::Vector2i getSize() { return size; }
 };
 

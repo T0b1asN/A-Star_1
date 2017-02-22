@@ -32,7 +32,7 @@ void Map::setup()
 		map.push_back(temp);
 	}
 
-	//priv_setup();
+	
 }
 
 Map::~Map()
@@ -69,26 +69,77 @@ void Map::setupFromTexture(sf::Image img)
 			{
 				temp.back() = 1;
 			}
+			if (brightness < 230)
+			{
+				if (img.getPixel(x, y).r < img.getPixel(x, y).g)
+				{
+					temp.back() = 2;
+				}
+				else if (img.getPixel(x, y).r > img.getPixel(x, y).g)
+				{
+					temp.back() = 3;
+				}
+			}
 		}
 		map.at(x) = temp;
 	}
 
 	fields.resize(size.x * size.y, sf::RectangleShape());
 
-	for (int x = 0; x < size.x; x++)
+	int iSt = 0;	//How many Startpositions are found
+	int iE = 0;		//How many Endpositions are found
+
+	std::vector<sf::Vector2i> starts;
+	std::vector<sf::Vector2i> ends;
+
+	for (int y = 0; y < size.y; y++)
 	{
-		for (int y = 0; y < size.y; y++)
+		for (int x = 0; x < size.x; x++)
 		{
 			fields.at(x + y * size.x).setSize(sf::Vector2f(cr::currWin().getSize().x / size.x, cr::currWin().getSize().y / size.y));
 			fields.at(x + y * size.x).setPosition(x * (cr::currWin().getSize().x / size.x), y * (cr::currWin().getSize().y / size.y));
-			if (map.at(x).at(y) == 0)
+			fields.at(x + y * size.x).setFillColor(ColorFromInt(map.at(x).at(y)));
+
+			if (map.at(x).at(y) == 2)		//start
 			{
-				fields.at(x + y * size.x).setFillColor(sf::Color(255, 255, 255));
+				iSt++;
+				starts.push_back(sf::Vector2i(x, y));
 			}
-			else if (map.at(x).at(y) == 1)
+			else if (map.at(x).at(y) == 3)	//end
 			{
-				fields.at(x + y * size.x).setFillColor(sf::Color(0, 0, 0));
+				iE++;
+				ends.push_back(sf::Vector2i(x, y));
 			}
+		}
+	}
+
+	if (iSt == 0)
+	{
+		startPos = sf::Vector2i(0, 0);
+		SetTile(startPos, 2);
+	}
+	else
+	{
+		startPos = starts.at(0);
+		starts.erase(starts.begin());
+		for (const sf::Vector2i cPos : starts)
+		{
+			SetTile(cPos, 0);
+		}
+	}
+
+	if (iE == 0)
+	{
+		endPos = size - sf::Vector2i(1, 1);
+		SetTile(endPos, 3);
+	}
+	else
+	{
+		endPos = ends.back();
+		ends.erase(ends.end() - 1);
+		for (const sf::Vector2i cPos : ends)
+		{
+			SetTile(cPos, 0);
 		}
 	}
 }
@@ -101,4 +152,39 @@ void Map::setupFromTextPath(std::string path)
 	else
 		std::cout << "Error loading file" << std::endl;
 	return;
+}
+
+void Map::SetTile(sf::Vector2i pos, int newValue)
+{
+	map.at(pos.x).at(pos.y) = newValue;
+
+	fields.at(pos.x + pos.y * size.x).setFillColor(ColorFromInt(map.at(pos.x).at(pos.y)));
+}
+
+void Map::SetTile(int indexX, int indexY, int newValue)
+{
+	SetTile(sf::Vector2i(indexX, indexY), newValue);
+}
+
+sf::Color Map::ColorFromInt(int i)
+{
+	switch (i)
+	{
+	case 0:
+		return sf::Color(200, 200, 200);
+		break;
+	case 1:
+		return sf::Color(0, 0, 0);
+		break;
+	case 2:
+		return sf::Color(0, 255, 0);
+		break;
+	case 3:
+		return sf::Color(255, 0, 0);
+		break;
+	default:
+		std::cout << "Error - Wrong int in map" << std::endl;
+		return sf::Color(255, 0, 255);
+		break;
+	}
 }
