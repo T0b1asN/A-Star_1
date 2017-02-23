@@ -15,6 +15,7 @@ int main()
 	setup();
 	map.setupFromTextPath("res\\Test_2.png");
 	Pathfinder pf(map);
+	pf.Setup();
 
 	std::cout << "Size: " << map.getSize().x << "|" << map.getSize().y << std::endl;
 
@@ -22,6 +23,7 @@ int main()
 	std::cout << "End: " << map.getEndPos().x << "|" << map.getEndPos().y << std::endl;
 
 	int steps = 0;
+	int stepsize = 1;
 
 	while (cr::currWin().isOpen())
 	{
@@ -36,14 +38,21 @@ int main()
 				break;
 			}
 		}
-		if (steps == 20)
+
+		if (steps == 1)
 		{
 			steps = 0;
 			pf.Step();
 		}
 
+		//while (!pf.hasPath())
+		//	pf.Step();
+
 		Draw();
-		steps++;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add))
+		{
+			steps++;
+		}
 	}
 
 	std::system("Pause");

@@ -45,8 +45,8 @@ public:
 		int GCost;
 		float cost;
 
-		bool operator==(Tile& rhs);
-		bool operator!=(Tile& rhs);
+		bool operator==(Tile rhs);
+		bool operator!=(Tile rhs);
 
 		friend std::ostream& operator<< (std::ostream& stream, const Tile& t) 
 		{
@@ -66,12 +66,21 @@ private:
 	std::vector<Tile> closedList;
 
 	float GetHCost(Tile pos);
+
+	bool foundPath = false;
+
+	bool inMap(Tile t);
+	bool inMap(sf::Vector2i pos);
 public:
 	Pathfinder(Map& pMap);
 	~Pathfinder();
 
 	void Setup();
 	void Step();
+
+	bool hasPath() { return foundPath; }
 };
 
 void DeleteTileFromVector(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t);
+
+bool TileVectorContains(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t);

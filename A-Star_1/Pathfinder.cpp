@@ -17,72 +17,73 @@ Pathfinder::~Pathfinder()
 void Pathfinder::Setup()
 {
 	//Now do the first Step
-	Step();
+	//doesnt work now, add walkable tiles first
+
+	for (int x = startPos.x - 1; x <= startPos.x + 1; x++)
+	{
+		for (int y = startPos.y - 1; y <= startPos.y + 1; y++)
+		{
+			if (sf::Vector2i(x, y) != startPos)
+			{
+				Tile _some(sf::Vector2i(x, y), 1, 1 + GetHCost(Tile(sf::Vector2i(x, y))));
+				openList.push_back(_some);
+			}
+		}
+	}
 }
 
 void Pathfinder::Step()
 {
-	int currGCost = currPos.GCost;
-	closedList.push_back(currPos);
-
-	for (int x = currPos.pos.x - 1; x <= currPos.pos.x + 1; x++)
+	if (!foundPath)
 	{
-		for (int y = currPos.pos.y - 1; y <= currPos.pos.y + 1; y++)
+		Tile newT;
+		for (const Tile t : openList)
 		{
-			if (x > 0 && y > 0 && x < map.getSize().x && y < map.getSize().y)
+			if (t.cost <= newT.cost && !TileVectorContains(closedList, t))
 			{
-				if ((sf::Vector2i(x, y) != currPos.pos)) // Ecken?? kostet mehr??
+				newT = t;
+				DeleteTileFromVector(openList, newT);
+			}
+		}
+
+		if (newT.pos == endPos)
+		{
+			foundPath = true;
+		}
+
+		closedList.push_back(newT);
+
+		for (int x = newT.pos.x - 1; x <= newT.pos.x + 1; x++)
+		{
+			for (int y = newT.pos.y - 1; y <= newT.pos.y + 1; y++)
+			{
+				if (inMap(sf::Vector2i(x, y)))
 				{
-					std::cout << currPos.pos.x << "|" << currPos.pos.y << std::endl;
-					if (map.map.at(x).at(y) != 1)
+					if (sf::Vector2i(x, y) != newT.pos && map.map.at(x).at(y) != 1 && map.map.at(x).at(y) != 4)
 					{
-						//if (std::find(v.begin(), v.end(), x) != v.end()) {
-						//	/* v contains x */
-						//}
-						//else {
-						//	/* v does not contain x */
-						//}
-						bool isFree = true;
-						for (const Tile t : closedList)
+						//Tile _some(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))));
+						if (TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
+							break;
+						else if (!TileVectorContains(openList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))))
+							&&
+							!TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
 						{
-							if (t.pos == sf::Vector2i(x, y))
-								isFree = false;
-						}
-						if (isFree)
-						{
-							Tile t = Tile(sf::Vector2i(x, y), currGCost + 1, currGCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))));
-							bool inOpen = false;
-							for (const Tile p : openList)
-							{
-								if (p.pos == t.pos)
-									inOpen = true;
-							}
-							if (!inOpen)
-							{
-								openList.push_back(t);
-							}
+							openList.push_back(Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))));
 						}
 					}
 				}
 			}
 		}
+
+		map.SetTile(newT.pos, 4);
+
+		std::cout << "openList: " << openList.size() << std::endl;
+		std::cout << "closedList: " << closedList.size() << std::endl;
 	}
-
-	Tile record(sf::Vector2i(0, 0), 10000, 10000.0f);
-
-	for (const Tile t : openList)
+	else
 	{
-		if (t.cost < record.cost)
-		{
-			record = t;
-		}
+		return;
 	}
-
-	DeleteTileFromVector(closedList, currPos);
-	std::cout << "record: " << record.pos.x << "|" << record.pos.y << std::endl;
-	currPos = record;
-
-	map.SetTile(currPos.pos, 4);
 }
 
 float Pathfinder::GetHCost(Tile pos)
@@ -91,20 +92,21 @@ float Pathfinder::GetHCost(Tile pos)
 	float delY = pos.pos.y - endPos.y;
 
 	float d = std::sqrt(std::pow(delX, 2) + std::pow(delY, 2));
-	std::cout << d << std::endl;
 	return d;
 }
 
-bool Pathfinder::Tile::operator==(Tile& rhs)
+bool Pathfinder::Tile::operator==(Tile rhs)
 {
 	if (this->cost == rhs.cost && this->GCost == rhs.GCost && this->pos.x == rhs.pos.x && this->pos.y == rhs.pos.y)
 		return true;
+	return false;
 }
 
-bool Pathfinder::Tile::operator!=(Tile& rhs)
+bool Pathfinder::Tile::operator!=(Tile rhs)
 {
 	if (*this == rhs)
 		return false;
+	return true;
 }
 
 void DeleteTileFromVector(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
@@ -119,4 +121,30 @@ void DeleteTileFromVector(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
 		}
 	}
 
+}
+
+bool TileVectorContains(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
+{
+	for (Pathfinder::Tile newT : vec)
+	{
+		if (newT == t)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Pathfinder::inMap(Pathfinder::Tile t)
+{
+	return inMap(t.pos);
+}
+
+bool Pathfinder::inMap(sf::Vector2i pos)
+{
+	if (pos.x < 0 || pos.y < 0)
+		return false;
+	if (pos.x > map.getSize().x - 1 || pos.y > map.getSize().y - 1)
+		return false;
+	return true;
 }

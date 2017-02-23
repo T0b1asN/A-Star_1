@@ -159,7 +159,6 @@ void Map::SetTile(sf::Vector2i pos, int newValue)
 	map.at(pos.x).at(pos.y) = newValue;
 
 	fields.at(pos.x + pos.y * size.x).setFillColor(ColorFromInt(map.at(pos.x).at(pos.y)));
-	std::cout << "Set Position " << pos.x << "|" << pos.y << " to " << newValue << std::endl;
 }
 
 void Map::SetTile(int indexX, int indexY, int newValue)
