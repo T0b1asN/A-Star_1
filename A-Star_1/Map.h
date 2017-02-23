@@ -17,6 +17,8 @@ private:
 
 	sf::Vector2i startPos;
 	sf::Vector2i endPos;
+
+	friend class Pathfinder;
 public:
 	Map(sf::Vector2i);
 	~Map();

@@ -159,6 +159,7 @@ void Map::SetTile(sf::Vector2i pos, int newValue)
 	map.at(pos.x).at(pos.y) = newValue;
 
 	fields.at(pos.x + pos.y * size.x).setFillColor(ColorFromInt(map.at(pos.x).at(pos.y)));
+	std::cout << "Set Position " << pos.x << "|" << pos.y << " to " << newValue << std::endl;
 }
 
 void Map::SetTile(int indexX, int indexY, int newValue)
@@ -181,6 +182,9 @@ sf::Color Map::ColorFromInt(int i)
 		break;
 	case 3:
 		return sf::Color(255, 0, 0);
+		break;
+	case 4:
+		return sf::Color(0, 0, 255);
 		break;
 	default:
 		std::cout << "Error - Wrong int in map" << std::endl;

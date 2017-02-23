@@ -36,6 +36,9 @@
     <ClCompile Include="Map.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Pathfinder.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SFML.h">
@@ -45,6 +48,9 @@
       <Filter>Headerdateien\Util</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Pathfinder.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
