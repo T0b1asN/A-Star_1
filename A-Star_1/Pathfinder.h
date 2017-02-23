@@ -47,9 +47,15 @@ public:
 
 		bool operator==(Tile& rhs);
 		bool operator!=(Tile& rhs);
+
+		friend std::ostream& operator<< (std::ostream& stream, const Tile& t) 
+		{
+			stream << "Pos: " << t.pos.x << "|" << t.pos.y << " ; Cost: " << t.cost;
+			return stream;
+		}
 	};
 private:
-	Map map;
+	Map& map;
 
 	Tile currPos;
 
@@ -61,7 +67,7 @@ private:
 
 	float GetHCost(Tile pos);
 public:
-	Pathfinder(Map pMap);
+	Pathfinder(Map& pMap);
 	~Pathfinder();
 
 	void Setup();

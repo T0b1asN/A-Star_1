@@ -1,6 +1,6 @@
 #include "Pathfinder.h"
 
-Pathfinder::Pathfinder(Map pMap) :
+Pathfinder::Pathfinder(Map& pMap) :
 	map(pMap)
 {
 	startPos = map.getStartPos();
@@ -25,9 +25,9 @@ void Pathfinder::Step()
 	int currGCost = currPos.GCost;
 	closedList.push_back(currPos);
 
-	for (int x = currPos.pos.x - 1; x < currPos.pos.x + 1; x++)
+	for (int x = currPos.pos.x - 1; x <= currPos.pos.x + 1; x++)
 	{
-		for (int y = currPos.pos.y - 1; y < currPos.pos.y + 1; y++)
+		for (int y = currPos.pos.y - 1; y <= currPos.pos.y + 1; y++)
 		{
 			if (x > 0 && y > 0 && x < map.getSize().x && y < map.getSize().y)
 			{
