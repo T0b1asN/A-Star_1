@@ -39,20 +39,20 @@ int main()
 			}
 		}
 
-		if (steps == 1)
-		{
-			steps = 0;
-			pf.Step();
-		}
-
-		//while (!pf.hasPath())
+		//if (steps == 1)
+		//{
+		//	steps = 0;
 		//	pf.Step();
+		//}
+
+		while (!pf.hasPath())
+			pf.Step();
 
 		Draw();
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add))
-		{
-			steps++;
-		}
+		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add))
+		//{
+		//	steps++;
+		//}
 	}
 
 	std::system("Pause");
