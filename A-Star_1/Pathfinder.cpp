@@ -1,150 +1,85 @@
 #include "Pathfinder.h"
 
-Pathfinder::Pathfinder(Map& pMap) :
+Pathfinder::Pathfinder(Map2_0& pMap):
 	map(pMap)
 {
-	startPos = map.getStartPos();
-	endPos = map.getEndPos();
-	currPos.pos = startPos;
-	currPos.GCost = 0;
+	openSet.push_back(map.getStart());
+	openSet.at(0).addNbs(map);
 }
 
-Pathfinder::~Pathfinder()
+void Pathfinder::Solve()
 {
-
-}
-
-void Pathfinder::Setup()
-{
-	//Now do the first Step
-	//doesnt work now, add walkable tiles first
-
-	for (int x = startPos.x - 1; x <= startPos.x + 1; x++)
+	while (!finished && !noSolution)
 	{
-		for (int y = startPos.y - 1; y <= startPos.y + 1; y++)
-		{
-			if (sf::Vector2i(x, y) != startPos)
-			{
-				Tile _some(sf::Vector2i(x, y), 1, 1 + GetHCost(Tile(sf::Vector2i(x, y))));
-				openList.push_back(_some);
-			}
-		}
+		Step();
 	}
 }
 
 void Pathfinder::Step()
 {
-	if (!foundPath)
+	//std::cout << (int)openSet.size() << std::endl;
+	if (openSet.size() > 0)
 	{
-		Tile newT;
-		for (const Tile t : openList)
+		for (Node n : closedSet)
 		{
-			if (t.cost <= newT.cost && !TileVectorContains(closedList, t))
+			map.nodes.at(n.getPos().x).at(n.getPos().y).debCol = sf::Color::Black;
+			std::cout << "Col1: " << map.nodes.at(n.getPos().x).at(n.getPos().y).debCol << std::endl;
+		}
+
+		int winner = 0;
+		for (int i = 0; i < openSet.size(); i++)
+		{
+			if (openSet.at(i).getF() < openSet.at(winner).getF())
 			{
-				newT = t;
-				DeleteTileFromVector(openList, newT);
+				winner = i;
 			}
 		}
 
-		if (newT.pos == endPos)
+		if (openSet.at(winner).getPos() == map.getEnd())
 		{
-			foundPath = true;
+			finished = true;
 		}
 
-		closedList.push_back(newT);
+		Node curr = openSet.at(winner);
+		openSet.erase(std::remove(openSet.begin(), openSet.end(), openSet.at(winner)));
+		closedSet.push_back(curr);
 
-		for (int x = newT.pos.x - 1; x <= newT.pos.x + 1; x++)
+		std::cout << curr.getNbs().size() << std::endl;
+
+		//eventuell Fehler:
+		//	nB ist keine Referenz, also wird der neue Wert nicht in den Vector uebertragen
+		for (Node nb : curr.getNbs())
 		{
-			for (int y = newT.pos.y - 1; y <= newT.pos.y + 1; y++)
+			if (std::find(closedSet.begin(), closedSet.end(), nb) == closedSet.end())
 			{
-				if (inMap(sf::Vector2i(x, y)))
+				int tempG = curr.getG() + 1;
+
+				if (std::find(openSet.begin(), openSet.end(), nb) != openSet.end())
 				{
-					if (sf::Vector2i(x, y) != newT.pos && map.map.at(x).at(y) != 1 && map.map.at(x).at(y) != 4)
+					if (tempG < nb.getG())
 					{
-						//Tile _some(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))));
-						if (TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
-							break;
-						else if (!TileVectorContains(openList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))))
-							&&
-							!TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
-						{
-							openList.push_back(Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))));
-						}
+						nb.setG(tempG);
 					}
 				}
+				else
+				{
+					nb.setG(tempG);
+					openSet.push_back(nb);
+				}
+
+				nb.setH(hCost(nb, map.getEnd()));
+				nb.setF(nb.getG() + nb.getH());
 			}
+			std::cout << "Neigbour" << std::endl;
 		}
-
-		map.SetTile(newT.pos, 4);
-
-		std::cout << "openList: " << openList.size() << std::endl;
-		std::cout << "closedList: " << closedList.size() << std::endl;
 	}
 	else
-	{
-		return;
-	}
+		noSolution = true;
 }
 
-float Pathfinder::GetHCost(Tile pos)
+float Pathfinder::hCost(Node a, Node b)
 {
-	float delX = pos.pos.x - endPos.x;
-	float delY = pos.pos.y - endPos.y;
-
-	float d = std::sqrt(std::pow(delX, 2) + std::pow(delY, 2));
-	return d;
+	return sqrt(pow(a.getPos().x - b.getPos().x, 2) + pow(a.getPos().y - b.getPos().y, 2));
 }
 
-bool Pathfinder::Tile::operator==(Tile rhs)
-{
-	if (this->cost == rhs.cost && this->GCost == rhs.GCost && this->pos.x == rhs.pos.x && this->pos.y == rhs.pos.y)
-		return true;
-	return false;
-}
 
-bool Pathfinder::Tile::operator!=(Tile rhs)
-{
-	if (*this == rhs)
-		return false;
-	return true;
-}
-
-void DeleteTileFromVector(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
-{
-	std::vector<Pathfinder::Tile>::iterator current = vec.begin();
-	while (current != vec.end()) {
-		if (*current == t) {
-			current = vec.erase(current);
-		}
-		else {
-			++current;
-		}
-	}
-
-}
-
-bool TileVectorContains(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
-{
-	for (Pathfinder::Tile newT : vec)
-	{
-		if (newT == t)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Pathfinder::inMap(Pathfinder::Tile t)
-{
-	return inMap(t.pos);
-}
-
-bool Pathfinder::inMap(sf::Vector2i pos)
-{
-	if (pos.x < 0 || pos.y < 0)
-		return false;
-	if (pos.x > map.getSize().x - 1 || pos.y > map.getSize().y - 1)
-		return false;
-	return true;
-}

@@ -147,11 +147,15 @@
     <ClCompile Include="curr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Map2_0.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="Pathfinder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="curr.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Map2_0.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Pathfinder.h" />
     <ClInclude Include="SFML.h" />
   </ItemGroup>

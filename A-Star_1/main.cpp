@@ -5,22 +5,28 @@
 
 #include "Map.h"
 #include "Pathfinder.h"
+#include "Map2_0.h"
 
 void setup();
 void Draw();
 
-Map map(sf::Vector2i(50, 50));
+Map2_0 map;
+
 int main()
 {
 	setup();
-	map.setupFromTextPath("res\\Test_2.png");
+	sf::Image img;
+	if (!img.loadFromFile("res\\Test_2.png"))
+		return 0;
+	Map2_0 _map(img);
+	map = _map;
+
 	Pathfinder pf(map);
-	pf.Setup();
 
 	std::cout << "Size: " << map.getSize().x << "|" << map.getSize().y << std::endl;
 
-	std::cout << "Start: " << map.getStartPos().x << "|" << map.getStartPos().y << std::endl;
-	std::cout << "End: " << map.getEndPos().x << "|" << map.getEndPos().y << std::endl;
+	std::cout << "Start: " << map.getStart().x << "|" << map.getStart().y << std::endl;
+	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
 
 	int steps = 0;
 	int stepsize = 1;
@@ -39,20 +45,9 @@ int main()
 			}
 		}
 
-		//if (steps == 1)
-		//{
-		//	steps = 0;
-		//	pf.Step();
-		//}
-
-		while (!pf.hasPath())
-			pf.Step();
+		pf.Step();
 
 		Draw();
-		//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add))
-		//{
-		//	steps++;
-		//}
 	}
 
 	std::system("Pause");
