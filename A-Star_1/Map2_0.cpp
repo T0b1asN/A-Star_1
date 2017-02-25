@@ -31,17 +31,26 @@ Map2_0::Map2_0(sf::Image img)
 		for (int y = 0; y < size.y; y++)
 		{
 			temp.push_back(Node(sf::Vector2i(x, y)));
+			temp.back().addNbs(*this);
 
 			sf::Color pix = img.getPixel(x, y);
-			if (pix.g > pix.r) //gruen
+			if (pix == sf::Color::Black)
 			{
-				iSt++;
-				starts.push_back(sf::Vector2i(x, y));
+				temp.back().setObstacle(true);
+				temp.back().debCol = sf::Color::Black;
 			}
-			else if(pix.r > pix.g) //rot
+			else
 			{
-				iE++;
-				ends.push_back(sf::Vector2i(x, y));
+				if (pix.g > pix.r) //gruen
+				{
+					iSt++;
+					starts.push_back(sf::Vector2i(x, y));
+				}
+				else if (pix.r > pix.g) //rot
+				{
+					iE++;
+					ends.push_back(sf::Vector2i(x, y));
+				}
 			}
 		}
 		nodes.push_back(temp);

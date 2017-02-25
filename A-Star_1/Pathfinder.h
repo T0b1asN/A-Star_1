@@ -11,16 +11,22 @@
 class Pathfinder
 {
 private:
-	Map2_0 map;
+	Map2_0& map;
+	int run = 0;
 
-	bool finished;
-	bool noSolution = true;
+	bool finished = false;
+	bool noSolution = false;
 
 	//use Positions in Map?
-	std::vector<Node> openSet;
-	std::vector<Node> closedSet;
+	std::vector<sf::Vector2i> openSet;
+	std::vector<sf::Vector2i> closedSet;
 
 	float hCost(Node a, Node b);
+
+	Node old;
+
+	std::vector<sf::Vector2i> path;
+	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
 public:
 	Pathfinder(Map2_0& pMap);
 
@@ -28,4 +34,13 @@ public:
 	void Step();
 
 	void Draw();
+
+	bool isFinished() { return finished; }
+	bool hasSolution() { return !noSolution; }
+
+	void finish();
 };
+
+std::vector<sf::Vector2i>::iterator RemoveFromOACList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
+
+std::vector<sf::Vector2i>::iterator FindInList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
