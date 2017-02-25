@@ -82,7 +82,7 @@ void Pathfinder::Step()
 				if (FindInList(closedSet, nb.getPos()) == closedSet.end())
 				{
 					int tempG = (int)curr.getG() + 1;
-					
+
 					if (FindInList(openSet, nb.getPos()) != openSet.end())
 					{
 						if (tempG < nb.getG())
@@ -91,7 +91,9 @@ void Pathfinder::Step()
 							//std::cout << nb.getParent().x << "|" << nb.getParent().y << std::endl;
 							nb.setParent(curr.getPos());
 						}
-						continue;
+						//else
+						//	continue;
+						//continue;
 					}
 					else
 					{
@@ -116,9 +118,93 @@ void Pathfinder::Step()
 		noSolution = true;
 }
 
+void Pathfinder::Eff_Solve()
+{
+	Node* startN = new Node(map.getStart());
+
+	startN->setObstacle(false);
+	startN->setG(0.f);
+	startN->setH(hCost(*startN, map.getEnd()));
+	startN->setF(startN->getH() + startN->getG());
+	startN->addNbs(map);
+
+	openL.push_back(*startN);
+	delete startN;
+
+
+	while (openL.size() > 0)
+	{
+		std::cout << "Open Size: " << openL.size() << std::endl;
+		Node rec;
+		std::cout << "Rec F score: " << rec.getF() << std::endl;
+		for (Node& n : openL)
+		{
+			std::cout << "n F score: " << n.getF() << std::endl;
+			std::cout << "n\'s neighbours: " << n.getNbs().size() << std::endl;
+			if (n < rec)
+			{
+				rec.setNode(n);
+			}
+			else if (n.getF() == rec.getF())
+				if (n.getH() < rec.getH())
+					rec.setNode(n);
+		}
+
+		std::cout << "rec F score: " << rec.getF() << std::endl;
+		std::cout << "rec\'s neighbours: " << rec.getNbs().size() << std::endl;
+
+		std::cout << (FindInNodeVec(openL, rec) == openL.end()) << std::endl;
+
+		//if (RemoveFromNodeVec(openL, rec) == openL.end())
+		//	std::system("PAUSE");
+		openL.erase(std::remove(openL.begin(), openL.end(), rec));
+
+		closedL.push_back(rec);
+
+		if (rec.getPos() != map.getStart() && rec.getPos() != map.getEnd())
+			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Blue;
+		else if (rec.getPos() == map.getStart())
+			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Green;
+		else if (rec.getPos() == map.getEnd())
+			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Red;
+
+		if (rec.getPos() == map.getEnd())
+			return;//Finish
+
+		std::cout << "Evaluating neighbours: " << rec.getNbs().size() << std::endl;
+		for (Node nb : rec.getNbs())
+		{
+			if (std::find(openL.begin(), openL.end(), nb) != openL.end())
+				continue;
+
+			if ((nb.getF() > (rec.getG() + 1 + hCost(rec, map.getEnd()))) || (std::find(openL.begin(), openL.end(), nb) == openL.end()))
+			{
+				nb.setF(rec.getG() + 1 + hCost(rec, map.getEnd()));
+				nb.setParent(rec.getPos());
+
+				if (std::find(openL.begin(), openL.end(), nb) == openL.end())
+				{
+					openL.push_back(nb);
+					openL.back().addNbs(map);
+				}
+
+				std::cout << "Free Neighbour" << std::endl;
+			}
+		}
+		_sleep(100);
+	}
+}
+
 float Pathfinder::hCost(Node a, Node b)
 {
 	return (float)sqrt(pow(a.getPos().x - b.getPos().x, 2) + pow(a.getPos().y - b.getPos().y, 2));
+
+	//Option
+	//h = min(dx, dy) * 14 + abs(dx - dy) * 10
+	//val dx = abs(goalXcoord - nodeXcoordinate)
+	//val dy = abs(goalYcoord - nodeYcoordinate)
+	//min smaller of two values
+	//abs absolute value
 }
 
 std::vector<sf::Vector2i>::iterator RemoveFromOACList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj)
@@ -150,15 +236,16 @@ std::vector<sf::Vector2i>::iterator FindInList(std::vector<sf::Vector2i>& l, sf:
 
 void Pathfinder::reconstructPath(sf::Vector2i start, sf::Vector2i pEnd)
 {
-	Node& end = map.nodes.at(pEnd.x).at(pEnd.y);
+	path.push_back(sf::Vector2i(1, 1));
+	//Node& end = map.nodes.at(pEnd.x).at(pEnd.y);
 
-	Node curr = end;
-	while (curr.getParent() != map.getStart())
-	{
-		path.push_back(curr.getPos());
-		curr = map.nodes.at(curr.getParent().x).at(curr.getParent().y);
-	}
-	path.push_back(curr.getPos());
+	//Node curr = end;
+	//while (curr.getParent() != map.getStart())
+	//{
+	//	path.push_back(curr.getPos());
+	//	curr = map.nodes.at(curr.getParent().x).at(curr.getParent().y);
+	//}
+	//path.push_back(curr.getPos());
 }
 
 void Pathfinder::finish()
@@ -173,4 +260,31 @@ void Pathfinder::finish()
 
 	map.nodes.at(map.getStart().x).at(map.getStart().y).debCol = sf::Color::Green;
 	map.nodes.at(map.getEnd().x).at(map.getEnd().y).debCol = sf::Color::Red;
+}
+
+std::vector<Node>::iterator RemoveFromNodeVec(std::vector<Node>& l, Node& obj)
+{
+	std::vector<Node>::iterator it = l.begin();
+
+	for (; it != l.end(); ++it)
+	{
+		if (*it == obj)
+		{
+			l.erase(it);
+			break;
+		}
+	}
+	return it;
+}
+
+std::vector<Node>::iterator FindInNodeVec(std::vector<Node>& l, Node& obj)
+{
+	std::vector<Node>::iterator it = l.begin();
+
+	for (; it != l.end(); ++it)
+	{
+		if (*it == obj)
+			break;
+	}
+	return it;
 }

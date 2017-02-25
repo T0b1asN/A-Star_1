@@ -13,7 +13,6 @@ Map2_0::Map2_0(std::string textPath)
 Map2_0::Map2_0(sf::Image img)
 {
 	//setup();
-
 	size = sf::Vector2i(img.getSize().x, img.getSize().y);
 
 	cr::setFieldW(cr::currWin().getSize().x / size.x);
@@ -45,11 +44,13 @@ Map2_0::Map2_0(sf::Image img)
 				{
 					iSt++;
 					starts.push_back(sf::Vector2i(x, y));
+					temp.back().debCol = sf::Color::Green;
 				}
 				else if (pix.r > pix.g) //rot
 				{
 					iE++;
 					ends.push_back(sf::Vector2i(x, y));
+					temp.back().debCol = sf::Color::Red;
 				}
 			}
 		}

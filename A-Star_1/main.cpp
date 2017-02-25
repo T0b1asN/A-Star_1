@@ -16,7 +16,7 @@ int main()
 {
 	setup();
 	sf::Image img;
-	if (!img.loadFromFile("res\\Test_2.png"))
+	if (!img.loadFromFile("res\\Test_4.png"))
 		return 0;
 	Map2_0 _map(img);
 	map = _map;
@@ -28,7 +28,7 @@ int main()
 	std::cout << "Start: " << map.getStart().x << "|" << map.getStart().y << std::endl;
 	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
 	sf::Clock c;
-	pf.Solve();
+	pf.Eff_Solve();
 	std::cout << "Time: " << c.getElapsedTime().asSeconds() << std::endl;
 
 	int steps = 0;

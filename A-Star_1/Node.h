@@ -54,4 +54,9 @@ public:
 
 	sf::Vector2i getParent() { return parent; }
 	void setParent(sf::Vector2i pPar) { parent = pPar; }
+
+//operators
+public:
+	bool operator<(Node& rhs) const;
+	bool operator==(Node& rhs) const;
 };

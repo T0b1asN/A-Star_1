@@ -27,11 +27,16 @@ private:
 
 	std::vector<sf::Vector2i> path;
 	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
+
+	std::vector<Node> openL;
+	std::vector<Node> closedL;
 public:
 	Pathfinder(Map2_0& pMap);
 
 	void Solve();
 	void Step();
+
+	void Eff_Solve();
 
 	void Draw();
 
@@ -41,6 +46,10 @@ public:
 	void finish();
 };
 
+//obsolete
 std::vector<sf::Vector2i>::iterator RemoveFromOACList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
-
+//obsolete
 std::vector<sf::Vector2i>::iterator FindInList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
+
+std::vector<Node>::iterator RemoveFromNodeVec(std::vector<Node>& l, Node& obj);
+std::vector<Node>::iterator FindInNodeVec(std::vector<Node>& l, Node& obj);
