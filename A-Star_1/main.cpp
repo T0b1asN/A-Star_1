@@ -27,6 +27,9 @@ int main()
 
 	std::cout << "Start: " << map.getStart().x << "|" << map.getStart().y << std::endl;
 	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
+	sf::Clock c;
+	pf.Solve();
+	std::cout << "Time: " << c.getElapsedTime().asSeconds() << std::endl;
 
 	int steps = 0;
 	int stepsize = 1;
@@ -42,11 +45,16 @@ int main()
 
 				return 0;
 				break;
+			case sf::Event::KeyPressed:
+				//if (evnt.key.code == sf::Keyboard::Add)
+				//	if (!pf.isFinished())
+				//		pf.Step();
+				//	else
+				//		std::cout << "finished" << std::endl;
+
+				break;
 			}
 		}
-
-		pf.Step();
-
 		Draw();
 	}
 
@@ -58,6 +66,7 @@ void setup()
 {
 	cr::currWin().create(sf::VideoMode(750U, 750U), "A* Test", sf::Style::Close);
 	cr::currWin().setFramerateLimit(60);
+	cr::currWin().setKeyRepeatEnabled(false);
 }
 
 void Draw()

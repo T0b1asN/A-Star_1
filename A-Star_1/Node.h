@@ -18,6 +18,10 @@ private:
 
 	sf::Vector2i pos;
 	std::vector<Node> neighbours;
+
+	bool obstacle = false;
+
+	sf::Vector2i parent;
 public:
 	Node();
 	Node(sf::Vector2i pPos);
@@ -37,10 +41,17 @@ public:
 
 	void addNbs(Map2_0& map);
 
-	std::vector<Node> getNbs() { std::cout << "HI " << neighbours.size() << std::endl; return neighbours; }
+	std::vector<Node> getNbs() { return neighbours; }
+
+	void setNode(Node& other);
 
 	void Draw();
 
 	sf::Color debCol = sf::Color::White;
-};
 
+	void setObstacle(bool state) { obstacle = state; }
+	bool isObstacle() { return obstacle; }
+
+	sf::Vector2i getParent() { return parent; }
+	void setParent(sf::Vector2i pPar) { parent = pPar; }
+};
