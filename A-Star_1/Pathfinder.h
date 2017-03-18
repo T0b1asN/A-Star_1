@@ -26,17 +26,17 @@ private:
 	Node old;
 
 	std::vector<sf::Vector2i> path;
-	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
 
 	std::vector<Node> openL;
 	std::vector<Node> closedL;
 public:
 	Pathfinder(Map2_0& pMap);
+	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
 
 	void Solve();
 	void Step();
 
-	void Eff_Solve();
+	int Eff_Solve();
 
 	void Draw();
 

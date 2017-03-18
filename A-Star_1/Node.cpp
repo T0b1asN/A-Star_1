@@ -35,7 +35,7 @@ void Node::addNbs(Map2_0& map)
 	int nbs = 0;
 	if (pos.x > 0)
 	{
-		neighbours.push_back(pos - sf::Vector2i(1, 0));
+		neighbours.push_back(pos + sf::Vector2i(-1, 0));
 		nbs++;
 	}
 	if (pos.x < map.getSize().x - 1)
@@ -46,7 +46,7 @@ void Node::addNbs(Map2_0& map)
 
 	if (pos.y > 0)
 	{
-		neighbours.push_back(pos - sf::Vector2i(0, 1));
+		neighbours.push_back(pos + sf::Vector2i(0, -1));
 		nbs++;
 	}
 	if (pos.y < map.getSize().y - 1)
@@ -60,21 +60,25 @@ void Node::addNbs(Map2_0& map)
 	if (pos.x > 0 && pos.y > 0)
 	{
 		neighbours.push_back(pos + sf::Vector2i(-1, -1));
+		nbs++;
 	}
 	//left, down
 	if (pos.x > 0 && pos.y < map.getSize().y - 1)
 	{
 		neighbours.push_back(pos + sf::Vector2i(-1, 1));
+		nbs++;
 	}
 	//right, up
 	if (pos.x < map.getSize().x - 1 && pos.y > 0)
 	{
 		neighbours.push_back(pos + sf::Vector2i(1, -1));
+		nbs++;
 	}
 	//right, down
 	if (pos.x < map.getSize().x && pos.y < map.getSize().y - 1)
 	{
 		neighbours.push_back(pos + sf::Vector2i(1, 1));
+		nbs++;
 	}
 }
 
@@ -93,11 +97,15 @@ std::ostream& operator<<(std::ostream& os, sf::Color c)
 
 void Node::setNode(Node& other)
 {
+	setNode2(other);
+	neighbours = other.getNbs();
+}
+
+void Node::setNode2(Node& other)
+{
 	f = other.getF();
 	g = other.getG();
 	h = other.getH();;
-
-	neighbours = other.getNbs();
 
 	pos = other.getPos();
 	parent = other.getParent();

@@ -18,8 +18,7 @@ int main()
 	sf::Image img;
 	if (!img.loadFromFile("res\\Test_4.png"))
 		return 0;
-	Map2_0 _map(img);
-	map = _map;
+	map.setupFromImage(img);
 
 	Pathfinder pf(map);
 
@@ -28,7 +27,11 @@ int main()
 	std::cout << "Start: " << map.getStart().x << "|" << map.getStart().y << std::endl;
 	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
 	sf::Clock c;
-	pf.Eff_Solve();
+	if (pf.Eff_Solve() == 1)
+		pf.reconstructPath(map.getStart(), map.getEnd());
+	else
+		std::cout << "No Solution!!!" << std::endl;
+	
 	std::cout << "Time: " << c.getElapsedTime().asSeconds() << std::endl;
 
 	int steps = 0;

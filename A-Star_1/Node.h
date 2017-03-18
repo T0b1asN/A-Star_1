@@ -44,6 +44,7 @@ public:
 	std::vector<Node> getNbs() { return neighbours; }
 
 	void setNode(Node& other);
+	void setNode2(Node& other);
 
 	void Draw();
 

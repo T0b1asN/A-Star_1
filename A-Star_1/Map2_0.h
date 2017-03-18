@@ -31,6 +31,10 @@ public:
 
 	void Draw();
 
+	void PrintSize();
+
 	friend class Pathfinder;
+
+	void setupFromImage(sf::Image img);
 };
 
