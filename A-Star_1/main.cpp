@@ -31,7 +31,7 @@ int main()
 {
 	setup();
 	sf::Image img;
-	if (!img.loadFromFile("res\\genmaze.png"))
+	if (!img.loadFromFile("res\\Test_1.png"))
 		return 0;
 	map.setupFromImage(img);
 

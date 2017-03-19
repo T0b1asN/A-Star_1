@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML.h"
 
-#define DIAGONAL false
+#define DIAGONAL true
 
 namespace cr
 {

@@ -55,7 +55,8 @@ int Pathfinder::Eff_Solve()
 		//std::cout << "rec F score: " << rec.getF() << std::endl;
 		//std::cout << "rec\'s neighbours: " << rec.getNbs().size() << std::endl;
 
-		map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Blue;
+		if (rec.getPos() != map.getStart())
+			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Blue;
 
 		//Remove rec from openL
 		openL.erase(std::remove(openL.begin(), openL.end(), rec));
