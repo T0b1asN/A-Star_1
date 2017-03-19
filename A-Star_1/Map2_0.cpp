@@ -161,7 +161,7 @@ void Map2_0::setupFromImage(sf::Image img)
 		for (Node& n : vec)
 		{
 			n.addNbs(*this);
-			std::cout << "Neighbourcount at start: " << n.getNbs().size() << std::endl;
+			//std::cout << "Neighbourcount at start: " << n.getNbs().size() << std::endl;
 		}
 	}
 }

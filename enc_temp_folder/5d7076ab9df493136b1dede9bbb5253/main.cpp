@@ -12,18 +12,11 @@ void Draw();
 
 Map2_0 map;
 
-sf::Vector2f mapPointToWorldPoint(sf::Vector2i in)
+sf::Vector2f mapPointToWorldPoint(sf::Vector2i)
 {
-	return sf::Vector2f(sf::Vector2f(in * cr::getFieldW()) + sf::Vector2f(0.5f, 0.5f));
-}
+	sf::Vector2f ret(0.f, 0.f);
 
-void DrawPath()
-{
-	sf::VertexArray line(sf::PrimitiveType::LineStrip);
-	for (const sf::Vector2i v : map.getPath())
-	{
-
-	}
+	return ret;
 }
 
 int main()
@@ -41,10 +34,7 @@ int main()
 	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
 	sf::Clock c;
 	if (pf.Eff_Solve() == 1)
-	{
 		pf.reconstructPath(map.getStart(), map.getEnd());
-		map.setPath(pf.getPath());
-	}
 	else
 		std::cout << "No Solution!!!" << std::endl;
 	
@@ -92,6 +82,5 @@ void Draw()
 {
 	cr::currWin().clear(sf::Color(100, 100, 100));
 	map.Draw();
-	DrawPath();
 	cr::currWin().display();
 }

@@ -18,8 +18,6 @@ private:
 	sf::Vector2i size;
 
 	sf::Vector2i start, end;
-
-	std::vector<sf::Vector2i> path;
 public:
 	Map2_0();
 	Map2_0(std::string textPath);
@@ -38,8 +36,5 @@ public:
 	friend class Pathfinder;
 
 	void setupFromImage(sf::Image img);
-
-	void setPath(std::vector<sf::Vector2i> _path) { path = _path; }
-	std::vector<sf::Vector2i> getPath() { return path; }
 };
 

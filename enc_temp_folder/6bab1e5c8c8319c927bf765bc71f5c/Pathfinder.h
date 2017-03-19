@@ -29,8 +29,6 @@ private:
 
 	std::vector<Node> openL;
 	std::vector<Node> closedL;
-
-	std::vector<sf::Vector2i> _path;
 public:
 	Pathfinder(Map2_0& pMap);
 	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
@@ -44,8 +42,6 @@ public:
 
 	bool isFinished() { return finished; }
 	bool hasSolution() { return !noSolution; }
-
-	std::vector<sf::Vector2i> getPath() { return _path; }
 
 	void finish();
 };
