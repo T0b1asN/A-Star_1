@@ -33,7 +33,7 @@ bool Node::operator==(const Node& rhs) const
 void Node::addNbs(Map2_0& map)
 {
 	int nbs = 0;
-	if (pos.x > 1)
+	if (pos.x > 0)
 	{
 		neighbours.push_back(pos + sf::Vector2i(-1, 0));
 		nbs++;
@@ -44,7 +44,7 @@ void Node::addNbs(Map2_0& map)
 		nbs++;
 	}
 
-	if (pos.y > 1)
+	if (pos.y > 0)
 	{
 		neighbours.push_back(pos + sf::Vector2i(0, -1));
 		nbs++;
@@ -54,34 +54,36 @@ void Node::addNbs(Map2_0& map)
 		neighbours.push_back(pos + sf::Vector2i(0, 1));
 		nbs++;
 	}
+	if (DIAGONAL)
+	{
+		//Diagonal
+		//left, up
+		if (pos.x > 0 && pos.y > 0)
+		{
+			neighbours.push_back(pos + sf::Vector2i(-1, -1));
+			nbs++;
+		}
+		//left, down
+		if (pos.x > 0 && pos.y < map.getSize().y - 1)
+		{
+			neighbours.push_back(pos + sf::Vector2i(-1, 1));
+			nbs++;
+		}
+		//right, up
+		if (pos.x < map.getSize().x - 1 && pos.y > 0)
+		{
+			neighbours.push_back(pos + sf::Vector2i(1, -1));
+			nbs++;
+		}
+		//right, down
+		if (pos.x < map.getSize().x - 1 && pos.y < map.getSize().y - 1)
+		{
+			neighbours.push_back(pos + sf::Vector2i(1, 1));
+			nbs++;
+		}
 
-	//Diagonal
-	//left, up
-	if (pos.x > 1 && pos.y > 1)
-	{
-		neighbours.push_back(pos + sf::Vector2i(-1, -1));
-		nbs++;
+		//std::cout << nbs << std::endl;
 	}
-	//left, down
-	if (pos.x > 1 && pos.y < map.getSize().y - 1)
-	{
-		neighbours.push_back(pos + sf::Vector2i(-1, 1));
-		nbs++;
-	}
-	//right, up
-	if (pos.x < map.getSize().x - 1 && pos.y > 1)
-	{
-		neighbours.push_back(pos + sf::Vector2i(1, -1));
-		nbs++;
-	}
-	//right, down
-	if (pos.x < map.getSize().x - 1 && pos.y < map.getSize().y - 1)
-	{
-		neighbours.push_back(pos + sf::Vector2i(1, 1));
-		nbs++;
-	}
-
-	//std::cout << nbs << std::endl;
 }
 
 void Node::Draw()

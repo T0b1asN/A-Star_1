@@ -132,13 +132,11 @@ void Map2_0::setupFromImage(sf::Image img)
 				{
 					iSt++;
 					starts.push_back(sf::Vector2i(x, y));
-					temp.back().debCol = sf::Color::Green;
 				}
 				else if (pix.r > pix.g) //rot
 				{
 					iE++;
 					ends.push_back(sf::Vector2i(x, y));
-					temp.back().debCol = sf::Color::Red;
 				}
 			}
 		}
@@ -155,6 +153,8 @@ void Map2_0::setupFromImage(sf::Image img)
 	else
 		end = ends.back();
 
+	nodes.at(start.x).at(start.y).debCol = sf::Color::Green;
+	nodes.at(end.x).at(end.y).debCol = sf::Color::Red;
 
 	for (std::vector<Node>& vec : nodes)
 	{

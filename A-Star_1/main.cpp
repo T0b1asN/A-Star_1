@@ -14,7 +14,7 @@ Map2_0 map;
 
 sf::Vector2f mapPointToWorldPoint(sf::Vector2i in)
 {
-	return sf::Vector2f(sf::Vector2f(in * cr::getFieldW()) + sf::Vector2f(0.5f, 0.5f));
+	return sf::Vector2f(sf::Vector2f(in * cr::getFieldW()) + sf::Vector2f(cr::getFieldW() / 2.f, cr::getFieldH() / 2.f));
 }
 
 void DrawPath()
@@ -22,15 +22,16 @@ void DrawPath()
 	sf::VertexArray line(sf::PrimitiveType::LineStrip);
 	for (const sf::Vector2i v : map.getPath())
 	{
-
+		line.append(sf::Vertex(mapPointToWorldPoint(v), sf::Color(0, 0, 255)));
 	}
+	cr::currWin().draw(line);
 }
 
 int main()
 {
 	setup();
 	sf::Image img;
-	if (!img.loadFromFile("res\\Test_4.png"))
+	if (!img.loadFromFile("res\\genmaze.png"))
 		return 0;
 	map.setupFromImage(img);
 

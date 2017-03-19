@@ -35,9 +35,6 @@ public:
 	Pathfinder(Map2_0& pMap);
 	void reconstructPath(sf::Vector2i start, sf::Vector2i pEnd);
 
-	void Solve();
-	void Step();
-
 	int Eff_Solve();
 
 	void Draw();
@@ -46,14 +43,4 @@ public:
 	bool hasSolution() { return !noSolution; }
 
 	std::vector<sf::Vector2i> getPath() { return _path; }
-
-	void finish();
 };
-
-//obsolete
-std::vector<sf::Vector2i>::iterator RemoveFromOACList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
-//obsolete
-std::vector<sf::Vector2i>::iterator FindInList(std::vector<sf::Vector2i>& l, sf::Vector2i& obj);
-
-std::vector<Node>::iterator RemoveFromNodeVec(std::vector<Node>& l, Node& obj);
-std::vector<Node>::iterator FindInNodeVec(std::vector<Node>& l, Node& obj);

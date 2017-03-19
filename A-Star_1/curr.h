@@ -1,6 +1,8 @@
 #pragma once
 #include "SFML.h"
 
+#define DIAGONAL false
+
 namespace cr
 {
 	sf::RenderWindow& currWin();
