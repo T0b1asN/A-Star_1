@@ -232,6 +232,8 @@ Vector2<T>& operator /=(Vector2<T>& left, T right);
 template <typename T>
 bool operator ==(const Vector2<T>& left, const Vector2<T>& right);
 
+
+
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
 /// \brief Overload of binary operator !=

@@ -39,6 +39,12 @@
     <ClCompile Include="Pathfinder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="Map2_0.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Node.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SFML.h">
@@ -51,6 +57,12 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Pathfinder.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Map2_0.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

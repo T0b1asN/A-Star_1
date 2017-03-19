@@ -1,150 +1,158 @@
 #include "Pathfinder.h"
 
-Pathfinder::Pathfinder(Map& pMap) :
+Pathfinder::Pathfinder(Map2_0& pMap):
 	map(pMap)
 {
-	startPos = map.getStartPos();
-	endPos = map.getEndPos();
-	currPos.pos = startPos;
-	currPos.GCost = 0;
+	openSet.push_back(map.getStart());
 }
 
-Pathfinder::~Pathfinder()
+int Pathfinder::Eff_Solve()
 {
+	//map.nodes.at(0).at(0).debCol;
+	//std::system("PAUSE");
+	int run = 0;
+	//Start Node Setup
+	Node* startN = new Node(map.getStart());
 
-}
+	startN->setObstacle(false);
+	startN->setG(0.f);
+	startN->setH(hCost(*startN, map.getEnd()));
+	startN->setF(startN->getH() + startN->getG());
+	startN->addNbs(map);
 
-void Pathfinder::Setup()
-{
-	//Now do the first Step
-	//doesnt work now, add walkable tiles first
+	openL.push_back(*startN);
+	delete startN;
 
-	for (int x = startPos.x - 1; x <= startPos.x + 1; x++)
+	//main loop
+	while (openL.size() > 0)
 	{
-		for (int y = startPos.y - 1; y <= startPos.y + 1; y++)
+		//Debug
+		//std::cout << "Open Size: " << openL.size() << std::endl;
+		//record node
+		Node rec;
+		//std::cout << "Rec F score: " << rec.getF() << std::endl;
+
+		//get new best Tile in openL, put it in rec
+		for (Node& n : openL)
 		{
-			if (sf::Vector2i(x, y) != startPos)
+			//Debug
+			//std::cout << "n F score: " << n.getF() << std::endl;
+			//std::cout << "n\'s neighbours: " << n.getNbs().size() << std::endl;
+			if (n < rec)
 			{
-				Tile _some(sf::Vector2i(x, y), 1, 1 + GetHCost(Tile(sf::Vector2i(x, y))));
-				openList.push_back(_some);
+				rec.setNode(n);
+				rec.addNbs(map);
 			}
-		}
-	}
-}
-
-void Pathfinder::Step()
-{
-	if (!foundPath)
-	{
-		Tile newT;
-		for (const Tile t : openList)
-		{
-			if (t.cost <= newT.cost && !TileVectorContains(closedList, t))
-			{
-				newT = t;
-				DeleteTileFromVector(openList, newT);
-			}
-		}
-
-		if (newT.pos == endPos)
-		{
-			foundPath = true;
-		}
-
-		closedList.push_back(newT);
-
-		for (int x = newT.pos.x - 1; x <= newT.pos.x + 1; x++)
-		{
-			for (int y = newT.pos.y - 1; y <= newT.pos.y + 1; y++)
-			{
-				if (inMap(sf::Vector2i(x, y)))
+			else if (n.getF() == rec.getF())
+				if (n.getH() < rec.getH())
 				{
-					if (sf::Vector2i(x, y) != newT.pos && map.map.at(x).at(y) != 1 && map.map.at(x).at(y) != 4)
+					rec.setNode(n);
+					rec.addNbs(map);
+				}
+		}
+
+		//Debug
+		//std::cout << "rec F score: " << rec.getF() << std::endl;
+		//std::cout << "rec\'s neighbours: " << rec.getNbs().size() << std::endl;
+
+		if (rec.getPos() != map.getStart())
+			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Blue;
+
+		//Remove rec from openL
+		openL.erase(std::remove(openL.begin(), openL.end(), rec));
+		//Put rec in closedL
+		closedL.push_back(rec);
+
+		if (rec.getPos() == map.getEnd())
+		{
+			std::cout << closedL.size() << std::endl;
+			return 1;//Finish
+		}
+
+		for (Node& nb : rec.getNbs())
+		{
+			if (std::find(closedL.begin(), closedL.end(), nb) != closedL.end() || 
+				map.nodes.at(nb.getPos().x).at(nb.getPos().y).isObstacle() ||
+				nb.getPos() == map.getStart())
+				continue;
+
+			if ((nb.getF() > (rec.getG() + 1 + hCost(rec, map.getEnd()))) || (std::find(openL.begin(), openL.end(), nb) == openL.end()))
+			{
+				nb.setF(rec.getG() + 1 + hCost(rec, map.getEnd()));
+				nb.setParent(rec.getPos());
+
+				if (std::find(openL.begin(), openL.end(), nb) == openL.end())
+				{
+					try
 					{
-						//Tile _some(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))));
-						if (TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
-							break;
-						else if (!TileVectorContains(openList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))))
-							&&
-							!TileVectorContains(closedList, Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y))))))
-						{
-							openList.push_back(Tile(sf::Vector2i(x, y), newT.GCost + 1, newT.GCost + 1 + GetHCost(Tile(sf::Vector2i(x, y)))));
-						}
+						openL.push_back(nb);
+						map.nodes.at(nb.getPos().x).at(nb.getPos().y).setNode2(nb);
 					}
+					catch (const std::out_of_range& oor) {
+						std::cerr << "Out of Range error: " << oor.what() << " at run: " << run << std::endl;
+						std::cout << "NB-Pos: " << nb.getPos().x << " | " << nb.getPos().y << std::endl;
+						std::cout << "OpenL-Count: " << openL.size() << std::endl;
+						std::system("PAUSE");
+					}
+					run++;
 				}
 			}
 		}
+		//_sleep(100);
+	}
+	return 0;
+}
 
-		map.SetTile(newT.pos, 4);
+float Pathfinder::hCost(Node a, Node b)
+{
+	//return (float)sqrt(pow(a.getPos().x - b.getPos().x, 2) + pow(a.getPos().y - b.getPos().y, 2));
 
-		std::cout << "openList: " << openList.size() << std::endl;
-		std::cout << "closedList: " << closedList.size() << std::endl;
+	//return std::min(a.getPos().x - b.getPos().x, a.getPos().y - b.getPos().y) * 1.4f + 
+	//	std::abs((a.getPos().x - b.getPos().x) - (a.getPos().y - b.getPos().y));
+	if (DIAGONAL)
+	{
+		float dx = abs(a.getPos().x - b.getPos().x);
+		float dy = abs(a.getPos().y - b.getPos().y);
+		return 1.f * (dx + dy) + (1.f - 2 * 1.f) * std::min(dx, dy);
 	}
 	else
 	{
-		return;
+		float dx = abs(a.getPos().x - b.getPos().x);
+		float dy = abs(a.getPos().y - b.getPos().y);
+		return 1.f * (dx + dy);
 	}
+	//Option
+	//h = min(dx, dy) * 14 + abs(dx - dy) * 10
+	//val dx = abs(goalXcoord - nodeXcoordinate)
+	//val dy = abs(goalYcoord - nodeYcoordinate)
+	//min smaller of two values
+	//abs absolute value
 }
 
-float Pathfinder::GetHCost(Tile pos)
+void Pathfinder::reconstructPath(sf::Vector2i start, sf::Vector2i pEnd)
 {
-	float delX = pos.pos.x - endPos.x;
-	float delY = pos.pos.y - endPos.y;
+	Node& end = map.nodes.at(pEnd.x).at(pEnd.y);
 
-	float d = std::sqrt(std::pow(delX, 2) + std::pow(delY, 2));
-	return d;
-}
-
-bool Pathfinder::Tile::operator==(Tile rhs)
-{
-	if (this->cost == rhs.cost && this->GCost == rhs.GCost && this->pos.x == rhs.pos.x && this->pos.y == rhs.pos.y)
-		return true;
-	return false;
-}
-
-bool Pathfinder::Tile::operator!=(Tile rhs)
-{
-	if (*this == rhs)
-		return false;
-	return true;
-}
-
-void DeleteTileFromVector(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
-{
-	std::vector<Pathfinder::Tile>::iterator current = vec.begin();
-	while (current != vec.end()) {
-		if (*current == t) {
-			current = vec.erase(current);
-		}
-		else {
-			++current;
-		}
-	}
-
-}
-
-bool TileVectorContains(std::vector<Pathfinder::Tile> vec, Pathfinder::Tile t)
-{
-	for (Pathfinder::Tile newT : vec)
+	Node curr = end;
+	while (curr.getParent() != map.getStart() && curr.getParent().x > -1 && curr.getParent().y > -1)
 	{
-		if (newT == t)
-		{
-			return true;
-		}
+		path.push_back(curr.getPos());
+		if (&curr != nullptr)
+			curr = map.nodes.at(curr.getParent().x).at(curr.getParent().y);
+		else
+			std::cout << "nullptr" << std::endl;
 	}
-	return false;
-}
+	path.push_back(curr.getPos());
+	path.push_back(map.getStart());
 
-bool Pathfinder::inMap(Pathfinder::Tile t)
-{
-	return inMap(t.pos);
-}
+	for (sf::Vector2i v : path)
+	{
+		map.nodes.at(v.x).at(v.y).debCol = sf::Color::Yellow;
+	}
 
-bool Pathfinder::inMap(sf::Vector2i pos)
-{
-	if (pos.x < 0 || pos.y < 0)
-		return false;
-	if (pos.x > map.getSize().x - 1 || pos.y > map.getSize().y - 1)
-		return false;
-	return true;
+	map.nodes.at(map.getStart().x).at(map.getStart().y).debCol = sf::Color::Green;
+	map.nodes.at(map.getEnd().x).at(map.getEnd().y).debCol = sf::Color::Red;
+
+	_path = path;
+	std::cout << "Pathlength: " << path.size() << std::endl;
 }
