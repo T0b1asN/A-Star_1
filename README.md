@@ -2,7 +2,7 @@
 A*-Test 1
 Just a little Test of an pathfinding-algorithm.
 Completely free to use, CC0, you can use it, which doesn't mean, you should. :)
-It doesn't even work right now and it will not be the fastest A*-implementation. 
+It works, but I guarantee, that it is not the fastest!
 
 ## Instructions
 To use the application, you need to locate a folder res, located in a folder in the folder of the executable.
