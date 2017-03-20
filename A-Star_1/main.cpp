@@ -83,7 +83,7 @@ int main()
 		while (cr::currWin().pollEvent(evnt))
 			if (evnt.type == sf::Event::Closed)
 				return 0;
-		Draw();
+		Draw();	
 	}
 
 	std::system("Pause");
