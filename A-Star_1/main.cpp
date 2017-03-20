@@ -12,11 +12,14 @@ void Draw();
 
 Map2_0 map;
 
+//Convert point on the map (like {10, 10}) to a "world point" that can be drawn
+//returns center of the field
 sf::Vector2f mapPointToWorldPoint(sf::Vector2i in)
 {
 	return sf::Vector2f(sf::Vector2f(in * cr::getFieldW()) + sf::Vector2f(cr::getFieldW() / 2.f, cr::getFieldH() / 2.f));
 }
 
+//Draws a line over the path
 void DrawPath()
 {
 	sf::VertexArray line(sf::PrimitiveType::LineStrip);
@@ -29,17 +32,37 @@ void DrawPath()
 
 int main()
 {
+	std::string name;
+	std::cout << "Type in name of the image in the res folder (w/ extension): " << std::endl;
+	std::cin >> name;
+
+	std::cout << "Allow diagonal movement (Y/N)" << std::endl;
+	char answ = ' ';
+	std::cin >> answ;
+	switch (answ)
+	{
+	case 'y':
+	case 'Y':
+		cr::setDiag(true);
+		break;
+	case 'n':
+	case 'N':
+		cr::setDiag(false);
+		break;
+	}
+
 	setup();
 	sf::Image img;
-	if (!img.loadFromFile("res\\Test_3.png"))
-		return 0;
+	if (!img.loadFromFile("res\\" + name))
+	{
+		std::cout << "File not found!" << std::endl;
+		std::system("PAUSE");
+		return 1;
+	}
 	map.setupFromImage(img);
 
 	Pathfinder pf(map);
-	std::cout << "Size: " << map.getSize().x << "|" << map.getSize().y << std::endl;
 
-	std::cout << "Start: " << map.getStart().x << "|" << map.getStart().y << std::endl;
-	std::cout << "End: " << map.getEnd().x << "|" << map.getEnd().y << std::endl;
 	sf::Clock c;
 	if (pf.Eff_Solve() == 1)
 	{
@@ -58,23 +81,8 @@ int main()
 	{
 		sf::Event evnt;
 		while (cr::currWin().pollEvent(evnt))
-		{
-			switch (evnt.type)
-			{
-			case sf::Event::Closed:
-
+			if (evnt.type == sf::Event::Closed)
 				return 0;
-				break;
-			case sf::Event::KeyPressed:
-				//if (evnt.key.code == sf::Keyboard::Add)
-				//	if (!pf.isFinished())
-				//		pf.Step();
-				//	else
-				//		std::cout << "finished" << std::endl;
-
-				break;
-			}
-		}
 		Draw();
 	}
 
@@ -82,6 +90,7 @@ int main()
 	return 0;
 }
 
+//sets up the window
 void setup()
 {
 	cr::currWin().create(sf::VideoMode(750U, 750U), "A* Test", sf::Style::Close);
@@ -89,6 +98,7 @@ void setup()
 	cr::currWin().setKeyRepeatEnabled(false);
 }
 
+//Draws everything in the window
 void Draw()
 {
 	cr::currWin().clear(sf::Color(100, 100, 100));

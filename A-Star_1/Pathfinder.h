@@ -14,16 +14,7 @@ private:
 	Map2_0& map;
 	int run = 0;
 
-	bool finished = false;
-	bool noSolution = false;
-
-	//use Positions in Map?
-	std::vector<sf::Vector2i> openSet;
-	std::vector<sf::Vector2i> closedSet;
-
 	float hCost(Node a, Node b);
-
-	Node old;
 
 	std::vector<sf::Vector2i> path;
 
@@ -37,10 +28,6 @@ public:
 
 	int Eff_Solve();
 
-	void Draw();
-
-	bool isFinished() { return finished; }
-	bool hasSolution() { return !noSolution; }
-
+	//returns the saved path (empty if no solution)
 	std::vector<sf::Vector2i> getPath() { return _path; }
 };

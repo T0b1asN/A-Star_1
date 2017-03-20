@@ -54,7 +54,7 @@ void Node::addNbs(Map2_0& map)
 		neighbours.push_back(pos + sf::Vector2i(0, 1));
 		nbs++;
 	}
-	if (DIAGONAL)
+	if (cr::getDiag())
 	{
 		//Diagonal
 		//left, up

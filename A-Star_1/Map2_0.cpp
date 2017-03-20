@@ -100,6 +100,7 @@ void Map2_0::PrintSize()
 
 void Map2_0::setupFromImage(sf::Image img)
 {
+	nodes.clear();
 	//setup();
 	size = sf::Vector2i(img.getSize().x, img.getSize().y);
 

@@ -33,9 +33,6 @@
     <ClCompile Include="curr.cpp">
       <Filter>Quelldateien\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
     <ClCompile Include="Pathfinder.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
@@ -52,9 +49,6 @@
     </ClInclude>
     <ClInclude Include="curr.h">
       <Filter>Headerdateien\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="Pathfinder.h">
       <Filter>Headerdateien</Filter>

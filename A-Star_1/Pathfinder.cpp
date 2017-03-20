@@ -3,15 +3,12 @@
 Pathfinder::Pathfinder(Map2_0& pMap):
 	map(pMap)
 {
-	openSet.push_back(map.getStart());
+	
 }
 
 int Pathfinder::Eff_Solve()
 {
-	//map.nodes.at(0).at(0).debCol;
-	//std::system("PAUSE");
 	int run = 0;
-	//Start Node Setup
 	Node* startN = new Node(map.getStart());
 
 	startN->setObstacle(false);
@@ -26,18 +23,12 @@ int Pathfinder::Eff_Solve()
 	//main loop
 	while (openL.size() > 0)
 	{
-		//Debug
-		//std::cout << "Open Size: " << openL.size() << std::endl;
 		//record node
 		Node rec;
-		//std::cout << "Rec F score: " << rec.getF() << std::endl;
-
+		
 		//get new best Tile in openL, put it in rec
 		for (Node& n : openL)
 		{
-			//Debug
-			//std::cout << "n F score: " << n.getF() << std::endl;
-			//std::cout << "n\'s neighbours: " << n.getNbs().size() << std::endl;
 			if (n < rec)
 			{
 				rec.setNode(n);
@@ -50,11 +41,8 @@ int Pathfinder::Eff_Solve()
 					rec.addNbs(map);
 				}
 		}
-
-		//Debug
-		//std::cout << "rec F score: " << rec.getF() << std::endl;
-		//std::cout << "rec\'s neighbours: " << rec.getNbs().size() << std::endl;
-
+		
+		//Color evaluated tiles blue
 		if (rec.getPos() != map.getStart())
 			map.nodes.at(rec.getPos().x).at(rec.getPos().y).debCol = sf::Color::Blue;
 
@@ -65,30 +53,39 @@ int Pathfinder::Eff_Solve()
 
 		if (rec.getPos() == map.getEnd())
 		{
-			std::cout << closedL.size() << std::endl;
+			//std::cout << closedL.size() << std::endl;
 			return 1;//Finish
 		}
 
+		//Add possible neighbours to the open list
 		for (Node& nb : rec.getNbs())
 		{
+			//continue to next neighbour, if it is in the closedL, if it is an obstacle, or if it is the start
 			if (std::find(closedL.begin(), closedL.end(), nb) != closedL.end() || 
 				map.nodes.at(nb.getPos().x).at(nb.getPos().y).isObstacle() ||
 				nb.getPos() == map.getStart())
 				continue;
 
+			//check if the neighbours complete cost is more than the possible new cost
+			//or if it is not in the open list
 			if ((nb.getF() > (rec.getG() + 1 + hCost(rec, map.getEnd()))) || (std::find(openL.begin(), openL.end(), nb) == openL.end()))
 			{
+				//set the new complete(F) cost and parent
 				nb.setF(rec.getG() + 1 + hCost(rec, map.getEnd()));
 				nb.setParent(rec.getPos());
 
+				//check if neighbour is not in the open list
 				if (std::find(openL.begin(), openL.end(), nb) == openL.end())
 				{
+					//Error handling
 					try
 					{
+						//put neighbour in open list and set changes in the node map
 						openL.push_back(nb);
 						map.nodes.at(nb.getPos().x).at(nb.getPos().y).setNode2(nb);
 					}
 					catch (const std::out_of_range& oor) {
+						//catch out of range errors in vectors
 						std::cerr << "Out of Range error: " << oor.what() << " at run: " << run << std::endl;
 						std::cout << "NB-Pos: " << nb.getPos().x << " | " << nb.getPos().y << std::endl;
 						std::cout << "OpenL-Count: " << openL.size() << std::endl;
@@ -98,37 +95,31 @@ int Pathfinder::Eff_Solve()
 				}
 			}
 		}
-		//_sleep(100);
 	}
 	return 0;
 }
 
+//get the heuristic cost between 2 tiles
 float Pathfinder::hCost(Node a, Node b)
 {
-	//return (float)sqrt(pow(a.getPos().x - b.getPos().x, 2) + pow(a.getPos().y - b.getPos().y, 2));
-
-	//return std::min(a.getPos().x - b.getPos().x, a.getPos().y - b.getPos().y) * 1.4f + 
-	//	std::abs((a.getPos().x - b.getPos().x) - (a.getPos().y - b.getPos().y));
-	if (DIAGONAL)
+	//heuristic cost
+	if (cr::getDiag())
 	{
-		float dx = abs(a.getPos().x - b.getPos().x);
-		float dy = abs(a.getPos().y - b.getPos().y);
+		//diagonal distance
+		float dx = (float)std::abs(a.getPos().x - b.getPos().x);
+		float dy = (float)std::abs(a.getPos().y - b.getPos().y);
 		return 1.f * (dx + dy) + (1.f - 2 * 1.f) * std::min(dx, dy);
 	}
 	else
 	{
-		float dx = abs(a.getPos().x - b.getPos().x);
-		float dy = abs(a.getPos().y - b.getPos().y);
+		//Manhattan square cost
+		float dx = (float)std::abs(a.getPos().x - b.getPos().x);
+		float dy = (float)std::abs(a.getPos().y - b.getPos().y);
 		return 1.f * (dx + dy);
 	}
-	//Option
-	//h = min(dx, dy) * 14 + abs(dx - dy) * 10
-	//val dx = abs(goalXcoord - nodeXcoordinate)
-	//val dy = abs(goalYcoord - nodeYcoordinate)
-	//min smaller of two values
-	//abs absolute value
 }
 
+//reconstruct the path, saved in local variable
 void Pathfinder::reconstructPath(sf::Vector2i start, sf::Vector2i pEnd)
 {
 	Node& end = map.nodes.at(pEnd.x).at(pEnd.y);
