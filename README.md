@@ -1,6 +1,6 @@
 # A-Star_1
 A*-Test 1
-Just a little Test of an Pathfindingalgorithm.
+Just a little Test of an pathfinding-algorithm.
 Completely free to use, CC0, you can use it, which doesn't mean, you should. :)
 It doesn't even work right now and it will not be the fastest A*-implementation. 
 
